@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>神明的5个考验</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background-color: #0b0b1a;
+            color: #f0f0f0;
+            padding: 32px 16px;
+            font-family: "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+            line-height: 1.7;
+            background-image: radial-gradient(circle at 50% 40%, #1a1a38 0%, #0b0b1a 70%);
+            min-height: 100vh;
+        }
+        .welcome-tip {
+            max-width: 1400px;
+            margin: 0 auto 40px;
+            text-align: center;
+            font-size: 22px;
+            opacity: 0.85;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 24px;
+        }
+        .card {
+            border-radius: 16px;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            aspect-ratio: 16 / 9;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+            transition: transform 0.25s ease;
+        }
+        .card:hover {
+            transform: scale(1.03);
+        }
+        .cover {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        .modal-mask {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.82);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .modal-mask.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .modal-box {
+            background: #16162c;
+            padding: 32px 28px;
+            border-radius: 18px;
+            max-width: 520px;
+            width: 90%;
+            position: relative;
+        }
+        .modal-text {
+            font-size: 18px;
+            line-height: 1.8;
+            margin-bottom: 24px;
+        }
+        .modal-close {
+            position: absolute;
+            top: 14px;
+            right: 16px;
+            background: none;
+            border: none;
+            color: #aaa;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        .modal-close:hover {
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="welcome-tip">神明的5个考验，点击卡片开启</div>
+    <div class="container">
+        <div class="card" data-index="0">
+            < img class="cover" src="cover_life.jpg" alt="生活">
+        </div>
+        <div class="card" data-index="1">
+            < img class="cover" src="cover_food.jpg" alt="美食">
+        </div>
+        <div class="card" data-index="2">
+            < img class="cover" src="cover_game.jpg" alt="游戏">
+        </div>
+        <div class="card" data-index="3">
+            < img class="cover" src="cover_music.jpg" alt="音乐">
+        </div>
+        <div class="card" data-index="4">
+            < img class="cover" src="cover_funny.jpg" alt="搞笑">
+        </div>
+    </div>
+
+    <div class="modal-mask" id="modalMask">
+        <div class="modal-box">
+            <button class="modal-close" id="closeBtn">×</button>
+            <div class="modal-text" id="modalText"></div>
+        </div>
+    </div>
+
+    <script>
+        const testTexts = [
+            "生活的考验：认真对待每一天，接纳所有的喜怒哀乐。",
+            "美食的考验：珍惜食物，懂得感恩每一份温饱。",
+            "游戏的考验：适度娱乐，不要被虚拟困住现实。",
+            "音乐的考验：用心感受旋律，安放自己的情绪。",
+            "搞笑的考验：保持乐观，笑着面对世间万般。"
+        ];
+        const cards = document.querySelectorAll('.card');
+        const modalMask = document.getElementById('modalMask');
+        const modalText = document.getElementById('modalText');
+        const closeBtn = document.getElementById('closeBtn');
+
+        cards.forEach(card=>{
+            card.addEventListener('click',()=>{
+                const idx = Number(card.dataset.index);
+                modalText.innerText = testTexts[idx];
+                modalMask.classList.add('show');
+            })
+        })
+        closeBtn.addEventListener('click',()=>{
+            modalMask.classList.remove('show');
+        })
+        modalMask.addEventListener('click',(e)=>{
+            if(e.target === modalMask){
+                modalMask.classList.remove('show');
+            }
+        })
+    </script>
+</body>
+</html>
