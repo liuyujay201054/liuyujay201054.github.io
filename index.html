@@ -1,11 +1,108 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
-    <meta charset="utf-8">
-    <title>jay的网站</title>
+    <meta charset="UTF-8">
+    <title>仿B站网站</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;}
+        body{background-color:#f4f4f4;font-family:"Microsoft Yahei",sans-serif;}
+        /* 顶部导航栏 B站红 */
+        .top-bar{
+            background:#fb7299;
+            color:white;
+            padding:12px 30px;
+            font-size:18px;
+        }
+        /* 分区菜单 */
+        .menu{
+            background:#fff;
+            padding:10px 30px;
+            border-bottom:1px solid #eee;
+        }
+        .menu span{
+            margin-right:25px;
+            cursor:pointer;
+        }
+        /* 视频卡片容器 */
+        .container{
+            padding:20px 30px;
+            display:grid;
+            grid-template-columns:repeat(4,1fr);
+            gap:20px;
+        }
+        /* 单个视频卡片 */
+        .card{
+            background:#fff;
+            border-radius:6px;
+            overflow:hidden;
+        }
+        .card-img{
+            width:100%;
+            height:160px;
+            background:#ccc;
+        }
+        .card-text{
+            padding:10px;
+        }
+        .title{
+            font-size:15px;
+            margin-bottom:6px;
+        }
+        .up{
+            color:#666;
+            font-size:13px;
+        }
+    </style>
 </head>
 <body>
-    <h1>欢迎来到我的世界</h1>
-    <p>这是我亲手搭建的网页</p >
+    <!-- 顶部B站红色导航 -->
+    <div class="top-bar">
+        Bilibili
+    </div>
+
+    <!-- 分区栏 -->
+    <div class="menu">
+        <span>首页</span>
+        <span>动画</span>
+        <span>游戏</span>
+        <span>音乐</span>
+        <span>生活</span>
+    </div>
+
+    <!-- 视频卡片列表 -->
+    <div class="container">
+        <!-- 卡片1 -->
+        <div class="card">
+            <div class="card-img">这里放图片</div>
+            <div class="card-text">
+                <div class="title">视频标题1</div>
+                <div class="up">UP主：xxx</div>
+            </div>
+        </div>
+        <!-- 卡片2 -->
+        <div class="card">
+            <div class="card-img">这里放图片</div>
+            <div class="card-text">
+                <div class="title">视频标题2</div>
+                <div class="up">UP主：xxx</div>
+            </div>
+        </div>
+        <!-- 卡片3 -->
+        <div class="card">
+            <div class="card-img">这里放图片</div>
+            <div class="card-text">
+                <div class="title">视频标题3</div>
+                <div class="up">UP主：xxx</div>
+            </div>
+        </div>
+        <!-- 卡片4 -->
+        <div class="card">
+            <div class="card-img">这里放图片</div>
+            <div class="card-text">
+                <div class="title">视频标题4</div>
+                <div class="up">UP主：xxx</div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
