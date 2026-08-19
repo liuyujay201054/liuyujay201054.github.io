@@ -10,385 +10,146 @@
             padding: 0;
             box‑sizing: border‑box;
         }
-
         body {
             background‑color: #0b0b1a;
             color: #f0f0f0;
             padding: 32px 16px;
             font‑family: "PingFang SC", "Microsoft YaHei", system‑ui, sans‑serif;
             line‑height: 1.7;
-            background‑image: radial‑gradient(circle at 50% 0%, #1a1a38 0%, #0b0b1a 70%);
+            background‑image: radial‑gradient(circle at 50% 40%, #1a1a38 0%, #0b0b1a 70%);
             min‑height: 100vh;
         }
-
         .welcome‑tip {
             max‑width: 1400px;
             margin: 0 auto 40px;
             text‑align: center;
             font‑size: 22px;
-            color: #c0c8ff;
-            letter‑spacing: 1px;
-            padding: 16px 24px;
-            background: rgba(40, 40, 80, 0.25);
-            border‑radius: 16px;
-            border: 1px solid rgba(192, 200, 255, 0.15);
+            opacity: 0.85;
         }
-
-        .page‑header {
-            max‑width: 1400px;
-            margin: 0 auto 48px;
-            text‑align: center;
-        }
-
-        .page‑header h1 {
-            font‑size: 40px;
-            font‑weight: 700;
-            background: linear‑gradient(90deg, #639aff, #b48aff);
-            -webkit‑background‑clip: text;
-            background‑clip: text;
-            color: transparent;
-            margin‑bottom: 10px;
-        }
-
-        .page‑header p {
-            color: #a8b0d8;
-            font‑size: 16px;
-        }
-
         .container {
             max‑width: 1400px;
             margin: 0 auto;
             display: grid;
-            grid‑template‑columns: repeat(5, 1fr);
+            grid‑template‑columns: repeat(auto‑fit, minmax(260px, 1fr));
             gap: 24px;
         }
-
         .card {
-            background: rgba(32, 32, 64, 0.6);
-            border‑radius: 20px;
+            border‑radius: 16px;
             overflow: hidden;
+            position: relative;
             cursor: pointer;
-            transition: all 0.35s cubic‑bezier(0.25, 0.8, 0.25, 1);
-            box‑shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
-            backdrop‑filter: blur(6px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            aspect‑ratio: 16 / 9;
+            box‑shadow: 0 4px 20px rgba(0,0,0,0.4);
+            transition: transform 0.25s ease;
         }
-
-        .card.locked {
-            filter: brightness(0.35);
-            cursor: not‑allowed;
-            pointer‑events: none;
+        .card:hover {
+            transform: scale(1.03);
         }
-
-        .card:hover:not(.locked) {
-            transform: translateY(-10px) scale(1.04);
-            box‑shadow: 0 16px 40px rgba(99, 154, 255, 0.25);
-            border‑color: rgba(120, 160, 255, 0.25);
-        }
-
-        .card‑title {
-            padding: 14px 16px;
-            text‑align: center;
-            font‑size: 17px;
-            font‑weight: 600;
-            color: #d0d8ff;
-        }
-
         .cover {
             width: 100%;
-            height: 210px;
+            height: 100%;
             object‑fit: cover;
             display: block;
         }
-
-        .video‑box {
-            display: none;
-            width: 100%;
-        }
-
-        .video‑box video {
-            width: 100%;
-            display: block;
-        }
-
         .modal‑mask {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.75);
-            z‑index: 9998;
-            display: none;
+            inset: 0;
+            background: rgba(0,0,0,0.82);
+            display: flex;
             align‑items: center;
             justify‑content: center;
-            padding: 20px;
+            z‑index: 999;
+            opacity: 0;
+            pointer‑events: none;
+            transition: opacity 0.3s ease;
         }
-
+        .modal‑mask.show {
+            opacity: 1;
+            pointer‑events: auto;
+        }
         .modal‑box {
-            background: linear‑gradient(135deg, rgba(48,48,90,0.96), rgba(26,26,52,0.96));
-            border‑radius: 24px;
-            padding: 36px 32px;
-            max‑width: 560px;
-            width: 100%;
+            background: #16162c;
+            padding: 32px 28px;
+            border‑radius: 18px;
+            max‑width: 520px;
+            width: 90%;
             position: relative;
-            box‑shadow: 0 12px 40px rgba(0,0,0,0.5);
-            border:1px solid rgba(180,190,255,0.18);
         }
-
+        .modal‑text {
+            font‑size: 18px;
+            line‑height: 1.8;
+            margin‑bottom: 24px;
+        }
         .modal‑close {
             position: absolute;
-            top: 18px;
-            right: 22px;
-            font‑size: 26px;
-            color: #ccccdd;
+            top: 14px;
+            right: 16px;
+            background: none;
+            border: none;
+            color: #aaa;
+            font‑size: 24px;
             cursor: pointer;
-            transition: color 0.2s;
         }
-
         .modal‑close:hover {
-            color: #ffffff;
-        }
-
-        .modal‑text {
             color: #fff;
-            font‑size: 18px;
-            text‑align: center;
-            line‑height:1.8;
-        }
-
-        .message‑wrap {
-            max‑width: 1100px;
-            margin: 70px auto 40px;
-            padding: 30px;
-            background: rgba(32,32,64,0.55);
-            border‑radius: 22px;
-            border:1px solid rgba(255,255,255,0.08);
-            box‑shadow:0 8px 24px rgba(0,0,0,0.3);
-        }
-
-        .message‑wrap h3 {
-            color: #b48aff;
-            margin‑bottom:20px;
-            font‑size:20px;
-        }
-
-        #msgInput {
-            width:100%;
-            height:110px;
-            padding:14px;
-            border‑radius:14px;
-            background:rgba(18,18,36,0.7);
-            border:1px solid rgba(255,255,255,0.12);
-            color:#fff;
-            font‑size:15px;
-            resize:vertical;
-            margin‑bottom:14px;
-        }
-
-        #submitMsg {
-            padding:12px 26px;
-            border‑radius:14px;
-            background:linear‑gradient(90deg,#639aff,#b48aff);
-            color:#fff;
-            border:none;
-            cursor:pointer;
-            font‑size:16px;
-            transition:opacity 0.25s;
-        }
-
-        #submitMsg:hover {
-            opacity:0.82;
-        }
-
-        .msg‑list {
-            margin‑top:24px;
-            display:flex;
-            flex‑direction:column;
-            gap:14px;
-        }
-
-        .msg‑item {
-            background:rgba(18,18,36,0.6);
-            padding:16px;
-            border‑radius:14px;
-            border:1px solid rgba(255,255,255,0.08);
-        }
-
-        .footer {
-            max‑width:1200px;
-            margin:50px auto 20px;
-            text‑align:center;
-            font‑size:15px;
-            color:#8892bb;
-        }
-
-        .footer a {
-            color:#76b8ff;
-            text‑decoration:none;
-            font‑weight:500;
-            transition:color 0.25s;
-        }
-
-        .footer a:hover {
-            color:#b2d4ff;
-        }
-
-        @media(max‑width:1200px){
-            .container{
-                grid‑template‑columns: repeat(2,1fr);
-            }
-        }
-        @media(max‑width:640px){
-            .container{
-                grid‑template‑columns: 1fr;
-            }
-            .page‑header h1{
-                font‑size:30px;
-            }
-            .welcome‑tip{
-                font‑size:18px;
-            }
         }
     </style>
 </head>
 <body>
-    <div class="welcome‑tip">
-        欢迎进入这个世界，你将接受神明的5个考验。
-    </div>
-
-    <div class="page‑header">
-        <h1>神明的5个考验</h1>
-        <p>完成全部考验，解锁最终结局</p >
-    </div>
-
+    <div class="welcome‑tip">神明的5个考验，点击卡片开启</div>
     <div class="container">
-        <!-- 考验1 生活 -->
         <div class="card" data‑index="0">
-            <div class="card‑title">考验一：生活</div>
             < img class="cover" src="cover_life.jpg" alt="生活">
-            <div class="video‑box">
-                <video src="prank.mp4" controls></video>
-            </div>
         </div>
-
-        <!-- 考验2 美食 -->
         <div class="card" data‑index="1">
-            <div class="card‑title">考验二：美食</div>
             < img class="cover" src="cover_food.jpg" alt="美食">
-            <div class="video‑box">
-                <video src="prank.mp4" controls></video>
-            </div>
         </div>
-
-        <!-- 考验3 游戏 -->
         <div class="card" data‑index="2">
-            <div class="card‑title">考验三：游戏</div>
             < img class="cover" src="cover_game.jpg" alt="游戏">
-            <div class="video‑box">
-                <video src="prank.mp4" controls></video>
-            </div>
         </div>
-
-        <!-- 考验4 音乐 -->
         <div class="card" data‑index="3">
-            <div class="card‑title">考验四：音乐</div>
             < img class="cover" src="cover_music.jpg" alt="音乐">
-            <div class="video‑box">
-                <video src="prank.mp4" controls></video>
-            </div>
         </div>
-
-        <!-- 考验5 搞笑 -->
         <div class="card" data‑index="4">
-            <div class="card‑title">考验五：搞笑</div>
             < img class="cover" src="cover_funny.jpg" alt="搞笑">
-            <div class="video‑box">
-                <video src="prank.mp4" controls></video>
-            </div>
         </div>
     </div>
 
-    <!-- 弹窗容器 -->
     <div class="modal‑mask" id="modalMask">
         <div class="modal‑box">
-            <div class="modal‑close" id="modalClose">×</div>
+            <button class="modal‑close" id="closeBtn">×</button>
             <div class="modal‑text" id="modalText"></div>
         </div>
     </div>
 
-    <!-- 留言区 -->
-    <div class="message‑wrap">
-        <h3>💬 来留言吐槽吧</h3>
-        <textarea id="msgInput" placeholder="写下你的吐槽..."></textarea>
-        <button id="submitMsg">提交留言</button>
-        <div class="msg‑list" id="msgList"></div>
-    </div>
+    <script>
+        const testTexts = [
+            "生活的考验：认真对待每一天，接纳所有的喜怒哀乐。",
+            "美食的考验：珍惜食物，懂得感恩每一份温饱。",
+            "游戏的考验：适度娱乐，不要被虚拟困住现实。",
+            "音乐的考验：用心感受旋律，安放自己的情绪。",
+            "搞笑的考验：保持乐观，笑着面对世间万般。"
+        ];
+        const cards = document.querySelectorAll('.card');
+        const modalMask = document.getElementById('modalMask');
+        const modalText = document.getElementById('modalText');
+        const closeBtn = document.getElementById('closeBtn');
 
-    <!-- 页脚 -->
-    <div class="footer">
-        B站：<a href=" " target="_blank">gayB</a >
-    </div>
-
-<script>
-// 保留你原本的5个弹窗文案
-const testTexts = [
-    "这里是你原来第一关文案",
-    "这里是你原来第二关文案",
-    "这里是你原来第三关文案",
-    "这里是你原来第四关文案",
-    "这里是你原来第五关文案"
-];
-
-const cards = document.querySelectorAll('.card');
-const modalMask = document.getElementById('modalMask');
-const modalText = document.getElementById('modalText');
-const modalClose = document.getElementById('modalClose');
-
-let currentIndex = 0;
-
-cards.forEach(card=>{
-    card.addEventListener('click',()=>{
-        const idx = Number(card.dataset.index);
-        if(idx !== currentIndex) return;
-
-        const coverImg = card.querySelector('.cover');
-        const videoBox = card.querySelector('.video‑box');
-        const video = videoBox.querySelector('video');
-
-        coverImg.style.display = 'none';
-        videoBox.style.display = 'block';
-        video.play();
-
-        video.onended = ()=>{
-            modalText.innerText = testTexts[idx];
-            modalMask.style.display = 'flex';
-        }
-    })
-})
-
-modalClose.addEventListener('click',()=>{
-    modalMask.style.display = 'none';
-    currentIndex++;
-    if(currentIndex < cards.length){
-        cards[currentIndex].classList.remove('locked');
-    }
-})
-
-// 留言功能
-const msgInput = document.getElementById('msgInput');
-const submitMsg = document.getElementById('submitMsg');
-const msgList = document.getElementById('msgList');
-
-submitMsg.addEventListener('click',()=>{
-    const text = msgInput.value.trim();
-    if(!text) return;
-    const div = document.createElement('div');
-    div.className = 'msg‑item';
-    div.innerText = text;
-    msgList.prepend(div);
-    msgInput.value = '';
-})
-</script>
+        cards.forEach(card=>{
+            card.addEventListener('click',()=>{
+                const idx = Number(card.dataset.index);
+                modalText.innerText = testTexts[idx];
+                modalMask.classList.add('show');
+            })
+        })
+        closeBtn.addEventListener('click',()=>{
+            modalMask.classList.remove('show');
+        })
+        modalMask.addEventListener('click',(e)=>{
+            if(e.target === modalMask){
+                modalMask.classList.remove('show');
+            }
+        })
+    </script>
 </body>
 </html>
