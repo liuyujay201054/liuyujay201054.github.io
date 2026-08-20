@@ -114,6 +114,23 @@
             cursor:pointer;
             font-size:17px;
         }
+        /* 通关彩蛋弹窗样式 */
+        .final-mask {
+            position: fixed;
+            top:0;
+            left:0;
+            width:100vw;
+            height:100vh;
+            background:#000;
+            display:none;
+            z-index:99999;
+            justify-content:center;
+            align-items:center;
+        }
+        .final-video {
+            width:90%;
+            max-width:700px;
+        }
     </style>
 </head>
 <body>
@@ -155,6 +172,13 @@
         </div>
     </div>
 
+    <!-- 通关彩蛋视频弹窗 -->
+    <div class="final-mask" id="finalMask">
+        <video class="final-video" id="prankVideo" controls>
+            <source src="prank.mp4" type="video/mp4">
+        </video>
+    </div>
+
 <script>
 const texts = [
     "生活的考验：相信我，虽然图片很美，但你还需要继续发掘更多",
@@ -170,6 +194,8 @@ const modalText = document.getElementById("modal-text");
 const closeBtn = document.getElementById("closeBtn");
 const startMask = document.getElementById("startMask");
 const startBtn = document.getElementById("startBtn");
+const finalMask = document.getElementById("finalMask");
+const prankVideo = document.getElementById("prankVideo");
 
 let current = 0;
 
@@ -190,9 +216,13 @@ cards.forEach((card)=>{
 closeBtn.addEventListener("click",()=>{
     mask.style.display = "none";
     current++;
-    if(current < cards.length){
-        cards[current].classList.remove("locked");
+    // 判断是否全部5关完成
+    if(current >= cards.length){
+        finalMask.style.display = "flex";
+        prankVideo.play();
+        return;
     }
+    cards[current].classList.remove("locked");
 })
 </script>
 </body>
