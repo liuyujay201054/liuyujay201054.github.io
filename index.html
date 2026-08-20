@@ -45,111 +45,155 @@
         .card:hover {
             transform: scale(1.03);
         }
-        .cover {
+        .card img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            display: block;
+        }
+        .card.locked {
+            display: none;
         }
         .modal-mask {
             position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.82);
-            display: flex;
-            align-items: center;
+            top:0;
+            left:0;
+            width:100vw;
+            height:100vh;
+            background:rgba(0,0,0,0.75);
+            display: none;
             justify-content: center;
-            z-index: 999;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-        }
-        .modal-mask.show {
-            opacity: 1;
-            pointer-events: auto;
+            align-items: center;
+            z-index:999;
         }
         .modal-box {
-            background: #16162c;
-            padding: 32px 28px;
-            border-radius: 18px;
-            max-width: 520px;
-            width: 90%;
-            position: relative;
-        }
-        .modal-text {
-            font-size: 18px;
-            line-height: 1.8;
-            margin-bottom: 24px;
+            background:#16162c;
+            padding:36px;
+            border-radius:16px;
+            max-width:520px;
+            width:90%;
+            color:#fff;
         }
         .modal-close {
-            position: absolute;
-            top: 14px;
-            right: 16px;
-            background: none;
-            border: none;
-            color: #aaa;
-            font-size: 24px;
-            cursor: pointer;
+            margin-top:24px;
+            padding:10px 24px;
+            background:#4455bb;
+            color:white;
+            border:none;
+            border-radius:8px;
+            cursor:pointer;
+            font-size:16px;
         }
-        .modal-close:hover {
-            color: #fff;
+        .start-mask {
+            position: fixed;
+            top:0;
+            left:0;
+            width:100vw;
+            height:100vh;
+            background:rgba(0,0,0,0.88);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index:9999;
+        }
+        .start-box {
+            background:#121228;
+            padding:40px;
+            border-radius:18px;
+            max-width:500px;
+            width:90%;
+            color:#fff;
+            text-align:center;
+        }
+        .start-btn {
+            margin-top:28px;
+            padding:12px 28px;
+            background:#5066dd;
+            color:white;
+            border:none;
+            border-radius:10px;
+            cursor:pointer;
+            font-size:17px;
         }
     </style>
 </head>
 <body>
+    <div class="start-mask" id="startMask">
+        <div class="start-box">
+            <h2>✨欢迎来到神明的考验✨</h2>
+            <p style="margin-top:16px; font-size:16px;">
+                你即将开启一场特别的试炼。<br>
+                必须完成上一关，才能解锁下一关。<br>
+                准备好了吗？
+            </p>
+            <button class="start-btn" id="startBtn">我准备好了，开始试炼</button>
+        </div>
+    </div>
+
     <div class="welcome-tip">神明的5个考验，点击卡片开启</div>
     <div class="container">
-        <div class="card" data-index="0">
-            <img class="cover" src="cover_life.jpg" alt="生活">
+        <div class="card locked" data-index="0">
+            <img src="cover_life.jpg" alt="生活">
         </div>
-        <div class="card" data-index="1">
-            <img class="cover" src="cover_food.jpg" alt="美食">
+        <div class="card locked" data-index="1">
+            <img src="cover_food.jpg" alt="美食">
         </div>
-        <div class="card" data-index="2">
-            <img class="cover" src="cover_game.jpg" alt="游戏">
+        <div class="card locked" data-index="2">
+            <img src="cover_game.jpg" alt="游戏">
         </div>
-        <div class="card" data-index="3">
-            <img class="cover" src="cover_music.jpg" alt="音乐">
+        <div class="card locked" data-index="3">
+            <img src="cover_music.jpg" alt="音乐">
         </div>
-        <div class="card" data-index="4">
-            <img class="cover" src="cover_funny.jpg" alt="搞笑">
+        <div class="card locked" data-index="4">
+            <img src="cover_funny.jpg" alt="趣味">
         </div>
     </div>
 
-    <div class="modal-mask" id="modalMask">
+    <div class="modal-mask" id="mask">
         <div class="modal-box">
-            <button class="modal-close" id="closeBtn">×</button>
-            <div class="modal-text" id="modalText"></div>
+            <div id="modal-text"></div>
+            <button class="modal-close" id="closeBtn">看完，解锁下一个</button>
         </div>
     </div>
 
-    <script>
-        const testTexts = [
-            "生活的考验：认真对待每一天，接纳所有的喜怒哀乐。",
-            "美食的考验：珍惜食物，懂得感恩每一份温饱。",
-            "游戏的考验：适度娱乐，不要被虚拟困住现实。",
-            "音乐的考验：用心感受旋律，安放自己的情绪。",
-            "搞笑的考验：保持乐观，笑着面对世间万般。"
-        ];
-        const cards = document.querySelectorAll('.card');
-        const modalMask = document.getElementById('modalMask');
-        const modalText = document.getElementById('modalText');
-        const closeBtn = document.getElementById('closeBtn');
+<script>
+const texts = [
+    "生活的考验：相信我，虽然图片很美，但你还需要继续发掘更多",
+    "美食的考验：这很好吃，我知道，但现实你吃不到。为什么视频内容一样？？？",
+    "游戏的考验：如果你打游戏很厉害，恭喜你有资格和作者玩了。其实这位是一个网页bug，但我保证后面不会有",
+    "音乐的考验：这首歌蛮好听，觉得不好听直接找个楼跳了，其实这是个恶搞网站，但惊喜就在眼前",
+    "趣味的考验：乐子"
+];
 
-        cards.forEach(card=>{
-            card.addEventListener('click',()=>{
-                const idx = Number(card.dataset.index);
-                modalText.innerText = testTexts[idx];
-                modalMask.classList.add('show');
-            })
-        })
-        closeBtn.addEventListener('click',()=>{
-            modalMask.classList.remove('show');
-        })
-        modalMask.addEventListener('click',(e)=>{
-            if(e.target === modalMask){
-                modalMask.classList.remove('show');
-            }
-        })
-    </script>
+const cards = document.querySelectorAll(".card");
+const mask = document.getElementById("mask");
+const modalText = document.getElementById("modal-text");
+const closeBtn = document.getElementById("closeBtn");
+const startMask = document.getElementById("startMask");
+const startBtn = document.getElementById("startBtn");
+
+let current = 0;
+
+startBtn.addEventListener("click", ()=>{
+    startMask.style.display = "none";
+    cards[0].classList.remove("locked");
+})
+
+cards.forEach((card)=>{
+    card.addEventListener("click",()=>{
+        const idx = Number(card.dataset.index);
+        if(idx !== current) return;
+        modalText.innerText = texts[idx];
+        mask.style.display = "flex";
+    })
+})
+
+closeBtn.addEventListener("click",()=>{
+    mask.style.display = "none";
+    current++;
+    if(current < cards.length){
+        cards[current].classList.remove("locked");
+    }
+})
+</script>
 </body>
 </html>
