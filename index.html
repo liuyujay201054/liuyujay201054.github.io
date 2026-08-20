@@ -50,86 +50,97 @@
             height: 100%;
             object-fit: cover;
         }
-        .card.locked {
+        .card.hidden {
             display: none;
         }
         .modal-mask {
             position: fixed;
-            top:0;
-            left:0;
-            width:100vw;
-            height:100vh;
-            background:rgba(0,0,0,0.75);
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0,0,0,0.75);
             display: none;
             justify-content: center;
             align-items: center;
-            z-index:999;
+            z-index: 999;
         }
         .modal-box {
-            background:#16162c;
-            padding:36px;
-            border-radius:16px;
-            max-width:520px;
-            width:90%;
-            color:#fff;
+            background: #16162c;
+            padding: 36px;
+            border-radius: 16px;
+            max-width: 520px;
+            width: 90%;
+            color: #fff;
         }
         .modal-close {
-            margin-top:24px;
-            padding:10px 24px;
-            background:#4455bb;
-            color:white;
-            border:none;
-            border-radius:8px;
-            cursor:pointer;
-            font-size:16px;
+            margin-top: 24px;
+            padding: 10px 24px;
+            background: #4455bb;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
         }
         .start-mask {
             position: fixed;
-            top:0;
-            left:0;
-            width:100vw;
-            height:100vh;
-            background:rgba(0,0,0,0.88);
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0,0,0,0.88);
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index:9999;
+            z-index: 9999;
         }
         .start-box {
-            background:#121228;
-            padding:40px;
-            border-radius:18px;
-            max-width:500px;
-            width:90%;
-            color:#fff;
-            text-align:center;
+            background: #121228;
+            padding: 40px;
+            border-radius: 18px;
+            max-width: 500px;
+            width: 90%;
+            color: #fff;
+            text-align: center;
         }
         .start-btn {
-            margin-top:28px;
-            padding:12px 28px;
-            background:#5066dd;
-            color:white;
-            border:none;
-            border-radius:10px;
-            cursor:pointer;
-            font-size:17px;
+            margin-top: 28px;
+            padding: 12px 28px;
+            background: #5066dd;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 17px;
         }
-        /* 通关彩蛋弹窗样式 */
-        .final-mask {
+        .video-mask {
             position: fixed;
-            top:0;
-            left:0;
-            width:100vw;
-            height:100vh;
-            background:#000;
-            display:none;
-            z-index:99999;
-            justify-content:center;
-            align-items:center;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: #000;
+            display: none;
+            z-index: 99999;
+            justify-content: center;
+            align-items: center;
         }
-        .final-video {
-            width:90%;
-            max-width:700px;
+        .video-player {
+            width: 90%;
+            max-width: 700px;
+        }
+        .skip-video-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.15);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
         }
     </style>
 </head>
@@ -148,19 +159,19 @@
 
     <div class="welcome-tip">神明的5个考验，点击卡片开启</div>
     <div class="container">
-        <div class="card locked" data-index="0">
+        <div class="card hidden" data-index="0">
             <img src="cover_life.jpg" alt="生活">
         </div>
-        <div class="card locked" data-index="1">
+        <div class="card hidden" data-index="1">
             <img src="cover_food.jpg" alt="美食">
         </div>
-        <div class="card locked" data-index="2">
+        <div class="card hidden" data-index="2">
             <img src="cover_game.jpg" alt="游戏">
         </div>
-        <div class="card locked" data-index="3">
-            <img src="cover_music.jpg" alt="音乐">
+        <div class="card hidden" data-index="3">
+            <img src="cover_music..jpg" alt="音乐">
         </div>
-        <div class="card locked" data-index="4">
+        <div class="card hidden" data-index="4">
             <img src="cover_funny.jpg" alt="趣味">
         </div>
     </div>
@@ -172,9 +183,9 @@
         </div>
     </div>
 
-    <!-- 通关彩蛋视频弹窗 -->
-    <div class="final-mask" id="finalMask">
-        <video class="final-video" id="prankVideo" controls>
+    <div class="video-mask" id="videoMask">
+        <button class="skip-video-btn" id="skipVideoBtn">跳过视频</button>
+        <video class="video-player" id="prankVideo" controls>
             <source src="prank.mp4" type="video/mp4">
         </video>
     </div>
@@ -194,36 +205,57 @@ const modalText = document.getElementById("modal-text");
 const closeBtn = document.getElementById("closeBtn");
 const startMask = document.getElementById("startMask");
 const startBtn = document.getElementById("startBtn");
-const finalMask = document.getElementById("finalMask");
+const videoMask = document.getElementById("videoMask");
 const prankVideo = document.getElementById("prankVideo");
+const skipVideoBtn = document.getElementById("skipVideoBtn");
 
 let current = 0;
 
-startBtn.addEventListener("click", ()=>{
+startBtn.addEventListener("click", () => {
     startMask.style.display = "none";
-    cards[0].classList.remove("locked");
-})
+    // 显示第一关
+    cards[current].classList.remove("hidden");
+});
 
-cards.forEach((card)=>{
-    card.addEventListener("click",()=>{
+// 点击卡片
+cards.forEach((card) => {
+    card.addEventListener("click", () => {
         const idx = Number(card.dataset.index);
-        if(idx !== current) return;
+        if (idx !== current) return;
         modalText.innerText = texts[idx];
-        mask.style.display = "flex";
-    })
-})
+        // 弹出视频
+        videoMask.style.display = "flex";
+    });
+});
 
-closeBtn.addEventListener("click",()=>{
+// 视频播放结束自动打开文字弹窗
+prankVideo.addEventListener("ended", () => {
+    closeVideoAndShowText();
+});
+
+// 跳过视频
+skipVideoBtn.addEventListener("click", () => {
+    closeVideoAndShowText();
+});
+
+function closeVideoAndShowText() {
+    videoMask.style.display = "none";
+    prankVideo.pause();
+    prankVideo.currentTime = 0;
+    mask.style.display = "flex";
+}
+
+// 点击解锁下一关
+closeBtn.addEventListener("click", () => {
     mask.style.display = "none";
+    // 把当前这一关隐藏（消失）
+    cards[current].classList.add("hidden");
     current++;
-    // 判断是否全部5关完成
-    if(current >= cards.length){
-        finalMask.style.display = "flex";
-        prankVideo.play();
-        return;
+    if (current < cards.length) {
+        // 显示新的一关
+        cards[current].classList.remove("hidden");
     }
-    cards[current].classList.remove("locked");
-})
+});
 </script>
 </body>
 </html>
