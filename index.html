@@ -18,6 +18,21 @@
             overflow: hidden;
         }
 
+        .start-page{
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            height:100vh;
+        }
+        #startBtn{
+            padding:14px 30px;
+            font-size:18px;
+            border-radius:12px;
+            border:none;
+            background:#253555;
+            color:#fff;
+        }
+
         .mask {
             position: fixed;
             inset: 0;
@@ -134,11 +149,15 @@
     </style>
 </head>
 <body>
+<div class="start-page" id="startPage">
+    <button id="startBtn">开始挑战</button>
+</div>
+
     <div class="video-wrap" id="videoWrap" style="display:none;">
-        <video id="mainVideo" preload="none"></video>
+        <video id="mainVideo" preload="auto"></video>
     </div>
 
-    <div class="mask" id="welcomeMask">
+    <div class="mask" id="welcomeMask" style="display:none;">
         <div class="dialog">
             <h3>欢迎来到神的领域，接受挑战可继续，不接受可直接退出。挑战完所有任务，将得到神秘奖励</h3>
             <div class="btn-group">
@@ -198,7 +217,7 @@
             <h3>喜欢上学，打一个喜欢的英文，不喜欢上学，打一个不喜欢上学的英文</h3>
             <div class="countdown-text" id="countdown">剩余时间：60秒</div>
             <div class="input-wrap">
-                <input type="text" id="answerInput" placeholder="输入like / dislike">
+                <input type="text" id="answerInput" placeholder="请输入你的答案">
             </div>
             <div class="btn-group">
                 <button id="btn4Submit">提交答案</button>
@@ -219,10 +238,14 @@ const videoList = [
 ];
 let currentVideoIndex = 0;
 let countdownTimer = null;
+let challengeWin = null;
+//预加载视频数组
+let preloadVideos = [];
 
 const videoEl = document.getElementById('mainVideo');
 const videoWrap = document.getElementById('videoWrap');
 
+const startPage = document.getElementById('startPage');
 const welcomeMask = document.getElementById('welcomeMask');
 const mask1 = document.getElementById('mask1');
 const mask2 = document.getElementById('mask2');
@@ -230,8 +253,32 @@ const mask3 = document.getElementById('mask3');
 const mask4 = document.getElementById('mask4');
 const endWrap = document.getElementById('endWrap');
 
+//预先缓存全部视频，改善首次卡顿
+function preloadAllVideo(){
+    videoList.forEach(src=>{
+        let v = document.createElement('video');
+        v.preload="auto";
+        v.src=src;
+        preloadVideos.push(v);
+    })
+}
+preloadAllVideo();
+
+document.getElementById('startBtn').onclick = function(){
+    challengeWin = window.open(location.href,"challenge","width=1200,height=800");
+}
+
+if(window.opener){
+    startPage.style.display="none";
+    welcomeMask.style.display="flex";
+}else{
+    startPage.style.display="flex";
+}
+
 document.getElementById('btnWelcomeContinue').onclick = startPlay;
-document.getElementById('btnWelcomeExit').onclick = startPlay;
+document.getElementById('btnWelcomeExit').onclick = function(){
+    window.close();
+};
 
 function forceFullscreen(){
     if(!document.fullscreenElement){
@@ -271,7 +318,9 @@ function failGame(){
     mask4.style.display="none";
     videoWrap.style.display="none";
     endWrap.style.display="flex";
-    setTimeout(()=>{window.close()},2500);
+    setTimeout(()=>{
+        window.close();
+    },3000);
 }
 
 document.getElementById('btn1Yes').onclick = ()=>{
@@ -325,9 +374,12 @@ document.getElementById('btn4Submit').onclick = ()=>{
         mask4.style.display = "none";
         videoWrap.style.display = "none";
         endWrap.style.display = "flex";
-        setTimeout(()=>{window.close()},3000);
+        setTimeout(()=>{
+            window.close();
+        },3000);
     }else{
-        alert("输入错误，请输入 like 或者 dislike");
+        alert("答案错误，挑战失败。");
+        failGame();
     }
 }
 </script>
