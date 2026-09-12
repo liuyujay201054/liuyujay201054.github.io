@@ -220,9 +220,26 @@
             max-width: 92%;
             max-height: 80vh;
         }
-        #backHomeBtn {
-            margin-top:24px;
-            padding:12px 32px;
+        /* 嘲讽照片层 */
+        .mock-img-wrap {
+            position: fixed;
+            inset: 0;
+            background: #000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1100;
+        }
+        .mock-img-wrap.active {
+            display: flex;
+        }
+        #mockImg {
+            max-width: 92%;
+            max-height: 92vh;
+        }
+        #backHomeFromMockBtn {
+            margin-top: 24px;
+            padding: 12px 32px;
         }
         .checkbox-item {
             margin: 14px 0;
@@ -244,7 +261,7 @@
 
 <!-- 视频层 -->
 <div class="video-wrap" id="videoWrap">
-    <video id="mainVideo" preload="auto"></video>
+    <video id="mainVideo" preload="metadata"></video>
 </div>
 
 <!-- 第一题 -->
@@ -315,6 +332,12 @@
     <button id="backHomeBtn">返回首页</button>
 </div>
 
+<!-- 嘲讽照片 -->
+<div class="mock-img-wrap" id="mockWrap">
+    < img id="mockImg" src="mock.jpg" alt="嘲讽照片">
+    <button id="backHomeFromMockBtn">返回首页</button>
+</div>
+
 <script>
     const videoList = [
         "v1.mp4",
@@ -324,7 +347,6 @@
     ];
     let currentVideoIndex = 0;
     let countdownTimer = null;
-    let preloadVideos = [];
 
     const videoEl = document.getElementById('mainVideo');
     const videoWrap = document.getElementById('videoWrap');
@@ -334,19 +356,10 @@
     const mask3 = document.getElementById('mask3');
     const mask4 = document.getElementById('mask4');
     const endWrap = document.getElementById('endWrap');
+    const mockWrap = document.getElementById('mockWrap');
     const answerInput = document.getElementById('answerInput');
 
-    function preloadAllVideo() {
-        videoList.forEach(src => {
-            let v = document.createElement('video');
-            v.preload = "auto";
-            v.src = src;
-            preloadVideos.push(v);
-        });
-    }
-    preloadAllVideo();
-
-    // 重置全部状态，回到封面
+    // 回到首页
     function resetAll() {
         clearInterval(countdownTimer);
         currentVideoIndex = 0;
@@ -355,12 +368,41 @@
         mask2.classList.remove("active");
         mask3.classList.remove("active");
         mask4.classList.remove("active");
+        videoEl.pause();
+        videoEl.src = "";
+        videoEl.load();
         videoWrap.classList.remove("active");
         endWrap.classList.remove("active");
+        mockWrap.classList.remove("active");
         startPage.style.display = "flex";
     }
 
-    // 直接开始游戏
+    // 失败时：直接显示嘲讽照片，不退出窗口
+    function showMockImage() {
+        clearInterval(countdownTimer);
+        mask1.classList.remove("active");
+        mask2.classList.remove("active");
+        mask3.classList.remove("active");
+        mask4.classList.remove("active");
+        videoEl.pause();
+        videoEl.src = "";
+        videoWrap.classList.remove("active");
+        endWrap.classList.remove("active");
+        mockWrap.classList.add("active");
+    }
+
+    // 通关成功：显示结局图
+    function showEndImage() {
+        clearInterval(countdownTimer);
+        mask4.classList.remove("active");
+        videoEl.pause();
+        videoEl.src = "";
+        videoWrap.classList.remove("active");
+        mockWrap.classList.remove("active");
+        endWrap.classList.add("active");
+    }
+
+    // 直接开始，不放欢迎弹窗
     document.getElementById('startBtn').onclick = function () {
         startPage.style.display = "none";
         videoWrap.classList.add("active");
@@ -369,25 +411,30 @@
     };
 
     document.getElementById('backHomeBtn').onclick = resetAll;
+    document.getElementById('backHomeFromMockBtn').onclick = resetAll;
 
-    // 全屏函数
+    // 全屏
     function forceFullscreen() {
         if (!document.fullscreenElement) {
             document.documentElement.requestFullscreen().catch(() => {});
         }
     }
-    // 屏蔽ESC退出全屏
+
+    // 屏蔽ESC
     document.addEventListener('keydown', e => {
         if (e.key === "Escape") e.preventDefault();
     });
 
     function playVideo(idx) {
         if (idx >= videoList.length) return;
+        videoEl.pause();
+        videoEl.currentTime = 0;
         videoEl.src = videoList[idx];
         videoEl.load();
         videoEl.muted = false;
         videoEl.controls = false;
         videoEl.play();
+
         videoEl.onended = () => {
             if (idx === 0) mask1.classList.add("active");
             if (idx === 1) mask2.classList.add("active");
@@ -399,40 +446,37 @@
         };
     }
 
-    function failGame() {
-        clearInterval(countdownTimer);
-        mask1.classList.remove("active");
-        mask2.classList.remove("active");
-        mask3.classList.remove("active");
-        mask4.classList.remove("active");
-        videoWrap.classList.remove("active");
-        endWrap.classList.add("active");
-    }
-
+    // 第一题
     document.getElementById('btn1Yes').onclick = () => {
         mask1.classList.remove("active");
         currentVideoIndex = 1;
         playVideo(currentVideoIndex);
     };
-    document.getElementById('btn1No').onclick = failGame;
 
+    document.getElementById('btn1No').onclick = showMockImage;
+
+    // 第二题
     document.getElementById('btn2A').onclick = () => {
         mask2.classList.remove("active");
         currentVideoIndex = 2;
         playVideo(currentVideoIndex);
     };
+
     document.getElementById('btn2B').onclick = () => {
         mask2.classList.remove("active");
         currentVideoIndex = 2;
         playVideo(currentVideoIndex);
     };
-    document.getElementById('btn2C').onclick = failGame;
 
+    document.getElementById('btn2C').onclick = showMockImage;
+
+    // 第三题
     document.getElementById('btn3Submit').onclick = () => {
         const bChecked = document.getElementById('optB').checked;
         const dChecked = document.getElementById('optD').checked;
+
         if (bChecked || dChecked) {
-            failGame();
+            showMockImage();
         } else {
             mask3.classList.remove("active");
             currentVideoIndex = 3;
@@ -440,6 +484,7 @@
         }
     };
 
+    // 第四题倒计时
     function startCountdown() {
         let left = 60;
         const dom = document.getElementById('countdown');
@@ -448,21 +493,21 @@
             dom.innerText = `剩余时间：${left}秒`;
             if (left <= 0) {
                 clearInterval(countdownTimer);
-                failGame();
+                showMockImage();
             }
-        },1000);
+        }, 1000);
     }
 
+    // 第四题提交
     document.getElementById('btn4Submit').onclick = () => {
         clearInterval(countdownTimer);
         const val = answerInput.value.trim().toLowerCase();
+
         if (val === "like" || val === "dislike") {
-            mask4.classList.remove("active");
-            videoWrap.classList.remove("active");
-            endWrap.classList.add("active");
+            showEndImage();
         } else {
             alert("答案错误，挑战失败。");
-            failGame();
+            showMockImage();
         }
     };
 </script>
