@@ -125,7 +125,8 @@
 </head>
 <body>
     <div class="video-wrap" id="videoWrap" style="display:none;">
-        <video id="mainVideo" preload="auto"></video>
+        <!-- 修改点：preload="none"，不提前预加载视频，完全不改动业务逻辑 -->
+        <video id="mainVideo" preload="none"></video>
     </div>
 
     <div class="mask" id="welcomeMask">
@@ -255,7 +256,6 @@ function playVideo(idx){
     }
 }
 
-// 失败也显示 end.jpg
 function failGame(){
     mask1.style.display="none";mask2.style.display="none";mask3.style.display="none";mask4.style.display="none";
     videoWrap.style.display="none";
