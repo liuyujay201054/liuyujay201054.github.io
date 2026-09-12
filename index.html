@@ -1,479 +1,68 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>神明的挑战</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: "Microsoft YaHei", sans-serif;
-        }
-        html, body {
-            width: 100%;
-            height: 100%;
-            background: #05060d;
-            color: #fff;
-            overflow: hidden;
-        }
-        /* 全屏首页封面 */
-        .start-page {
-            position: fixed;
-            inset: 0;
-            width: 100vw;
-            height: 100vh;
-            background:
-                radial-gradient(circle at 20% 30%, rgba(56, 89, 165, 0.35), transparent 45%),
-                radial-gradient(circle at 80% 70%, rgba(101, 123, 255, 0.25), transparent 50%),
-                linear-gradient(160deg, #070812 0%, #0b0f1f 50%, #070812 100%);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-        }
-        .start-page::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            background-image:
-                radial-gradient(1px 1px at 15% 25%, rgba(255,255,255,0.5), transparent 60%),
-                radial-gradient(1px 1px at 35% 75%, rgba(180,210,255,0.35), transparent 60%),
-                radial-gradient(1.5px 1.5px at 65% 35%, rgba(255,255,255,0.45), transparent 60%),
-                radial-gradient(1px 1px at 85% 65%, rgba(150,180,255,0.3), transparent 60%),
-                radial-gradient(1px 1px at 50% 50%, rgba(255,255,255,0.25), transparent 60%);
-            pointer-events: none;
-        }
-        .cover-content {
-            position: relative;
-            z-index: 2;
-            text-align: center;
-            padding: 0 24px;
-        }
-        .cover-title {
-            font-size: clamp(32px, 6vw, 56px);
-            letter-spacing: 12px;
-            color: #eaf1ff;
-            text-shadow: 0 0 24px rgba(120, 170, 255, 0.45);
-            margin-bottom: 14px;
-        }
-        .cover-subtitle {
-            font-size: clamp(14px, 1.6vw, 18px);
-            letter-spacing: 4px;
-            color: #8ea4d2;
-            margin-bottom: 50px;
-        }
-        #startBtn {
-            padding: 16px 52px;
-            font-size: 18px;
-            letter-spacing: 8px;
-            color: #eaf1ff;
-            background: transparent;
-            border: 1px solid rgba(120, 170, 255, 0.45);
-            border-radius: 2px;
-            cursor: pointer;
-            transition: all 0.35s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        #startBtn:hover {
-            background: rgba(120, 170, 255, 0.12);
-            border-color: rgba(180, 210, 255, 0.8);
-            box-shadow: 0 0 28px rgba(120, 170, 255, 0.35);
-            letter-spacing: 10px;
-        }
-        .tip-text {
-            position: absolute;
-            bottom: 30px;
-            left: 0;
-            right: 0;
-            text-align: center;
-            font-size: 12px;
-            color: #5a6a94;
-            letter-spacing: 2px;
-            z-index: 2;
-        }
-        /* 弹窗遮罩 */
-        .mask {
-            position: fixed;
-            inset: 0;
-            background: rgba(5, 6, 13, 0.78);
-            backdrop-filter: blur(14px);
-            z-index: 999;
-            display: none;
-            align-items: center;
-            justify-content: center;
-        }
-        .mask.active {
-            display: flex;
-        }
-        .dialog {
-            background: linear-gradient(145deg, rgba(16, 20, 42, 0.96), rgba(28, 34, 64, 0.96));
-            border: 1px solid rgba(120, 170, 255, 0.35);
-            box-shadow: 0 0 40px rgba(80, 130, 255, 0.18), inset 0 0 24px rgba(80, 130, 255, 0.08);
-            padding: 44px 36px;
-            border-radius: 18px;
-            width: 92%;
-            max-width: 560px;
-        }
-        .dialog h3 {
-            font-size: 19px;
-            line-height: 1.8;
-            color: #e6edff;
-            font-weight: 500;
-            letter-spacing: 1px;
-            margin-bottom: 26px;
-        }
-        .btn-group {
-            display: flex;
-            gap: 14px;
-            margin-top: 28px;
-            flex-wrap: wrap;
-        }
-        button {
-            flex: 1;
-            padding: 13px 14px;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            cursor: pointer;
-            background: linear-gradient(145deg, #253555, #1e2b48);
-            color: #d6e0ff;
-            min-width: 90px;
-            transition: 0.25s ease;
-            border: 1px solid rgba(120, 170, 255, 0.2);
-            letter-spacing: 0.5px;
-        }
-        button:hover {
-            background: linear-gradient(145deg, #2f4066, #253555);
-            box-shadow: 0 0 15px rgba(100, 160, 255, 0.3);
-            color: #fff;
-        }
-        /* 视频容器 */
-        .video-wrap {
-            position: fixed;
-            inset: 0;
-            background: #000;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 800;
-        }
-        .video-wrap.active {
-            display: flex;
-        }
-        #mainVideo {
-            width: 100%;
-            height: 100%;
-        }
-        @media (min-width: 768px) {
-            #mainVideo {
-                object-fit: cover;
-            }
-        }
-        @media (max-width: 767px) {
-            #mainVideo {
-                object-fit: contain;
-                background: #000;
-            }
-        }
-        .input-wrap {
-            margin: 18px 0;
-        }
-        #answerInput {
-            width: 100%;
-            padding: 13px 14px;
-            font-size: 16px;
-            border-radius: 10px;
-            border: 1px solid rgba(120, 170, 255, 0.25);
-            background: rgba(255, 255, 255, 0.04);
-            color: #fff;
-            outline: none;
-        }
-        #answerInput:focus {
-            border-color: rgba(120, 170, 255, 0.7);
-            box-shadow: 0 0 14px rgba(100, 160, 255, 0.25);
-        }
-        .countdown-text {
-            color: #ff8080;
-            margin-bottom: 14px;
-            font-size: 17px;
-            letter-spacing: 1px;
-        }
-        /* 结局层（成功/失败共用同一张图） */
-        .end-img-wrap {
-            position: fixed;
-            inset: 0;
-            background: #000;
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-        }
-        .end-img-wrap.active {
-            display: flex;
-        }
-        #endImg {
-            max-width: 92%;
-            max-height: 80vh;
-        }
-        #backHomeBtn {
-            margin-top:24px;
-            padding:12px 32px;
-        }
-        .checkbox-item {
-            margin: 14px 0;
-            font-size: 16px;
-            color: #d6e0ff;
-        }
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>神明的挑战</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:"Microsoft YaHei",sans-serif;-webkit-tap-highlight-color:transparent}
+html,body{width:100%;height:100%;background:#05060d;color:#fff;overflow:hidden}
+.p{position:fixed;inset:0;display:none;align-items:center;justify-content:center}
+.p.a{display:flex}
+#s{background:radial-gradient(circle at 20% 30%,rgba(56,89,165,.35),transparent 45%),radial-gradient(circle at 80% 70%,rgba(101,123,255,.25),transparent 50%),linear-gradient(160deg,#070812,#0b0f1f 50%,#070812);flex-direction:column;z-index:1000}
+.t{font-size:clamp(32px,6vw,56px);letter-spacing:12px;color:#eaf1ff;text-shadow:0 0 24px rgba(120,170,255,.45);margin-bottom:14px}
+.st{font-size:clamp(14px,1.6vw,18px);letter-spacing:4px;color:#8ea4d2;margin-bottom:50px}
+button{padding:13px 14px;border-radius:10px;font-size:16px;cursor:pointer;background:linear-gradient(145deg,#253555,#1e2b48);color:#d6e0ff;transition:.25s;border:1px solid rgba(120,170,255,.2)}
+button:hover{background:linear-gradient(145deg,#2f4066,#253555);box-shadow:0 0 15px rgba(100,160,255,.3);color:#fff}
+#sb{padding:16px 52px;font-size:18px;letter-spacing:8px;color:#eaf1ff;background:transparent;border:1px solid rgba(120,170,255,.45);border-radius:2px}
+#sb:hover{background:rgba(120,170,255,.12);letter-spacing:10px}
+#v{background:#000;z-index:800}
+#v video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .18s;background:#000}
+#v video.a{opacity:1}
+@media(max-width:767px){#v video{object-fit:contain}}
+.m{position:fixed;inset:0;background:rgba(5,6,13,.85);z-index:999;display:none;align-items:center;justify-content:center}
+.m.a{display:flex}
+.d{background:linear-gradient(145deg,rgba(16,20,42,.96),rgba(28,34,64,.96));border:1px solid rgba(120,170,255,.35);box-shadow:0 0 40px rgba(80,130,255,.18);padding:44px 36px;border-radius:18px;width:92%;max-width:560px}
+.d h3{font-size:19px;line-height:1.8;color:#e6edff;font-weight:500;margin-bottom:26px}
+.bg{display:flex;gap:14px;margin-top:28px;flex-wrap:wrap}
+.bg button{flex:1;min-width:90px}
+#c{color:#ff8080;margin-bottom:14px;font-size:17px}
+#ai{width:100%;padding:13px 14px;font-size:16px;border-radius:10px;border:1px solid rgba(120,170,255,.25);background:rgba(255,255,255,.04);color:#fff;outline:none}
+.ck{display:flex;align-items:center;gap:10px;margin:14px 0;font-size:16px;color:#d6e0ff;cursor:pointer}
+#e{background:#000;flex-direction:column;gap:22px;z-index:1000;padding:24px}
+#ei{max-width:92%;max-height:68vh;border-radius:12px;cursor:pointer}
+#et{font-size:15px;letter-spacing:6px;color:#8ea4d2}
+#e[data-t=fail] #et{color:#ff8080}
+#e[data-t=success] #et{color:#8fffc4}
+#rt{padding:12px 46px}
+</style>
 </head>
 <body>
-<!-- 首页封面 -->
-<div class="start-page" id="startPage">
-    <div class="cover-content">
-        <div class="cover-title">神明的挑战</div>
-        <div class="cover-subtitle">DIVINE CHALLENGE</div>
-        <button id="startBtn">开 始 挑 战</button>
-    </div>
-    <div class="tip-text">接受命运的指引，完成所有任务</div>
-</div>
-
-<!-- 视频层 -->
-<div class="video-wrap" id="videoWrap">
-    <video id="mainVideo" preload="metadata"></video>
-</div>
-
-<!-- 第一题 -->
-<div class="mask" id="mask1">
-    <div class="dialog">
-        <h3>请问欣赏这个男孩吗？</h3>
-        <div class="btn-group">
-            <button id="btn1Yes">欣赏</button>
-            <button id="btn1No">不欣赏</button>
-        </div>
-    </div>
-</div>
-
-<!-- 第二题 -->
-<div class="mask" id="mask2">
-    <div class="dialog">
-        <h3>如果你睡得比较早选a，睡得不早，选b，有心事，睡不着，选c。</h3>
-        <div class="btn-group">
-            <button id="btn2A">A</button>
-            <button id="btn2B">B</button>
-            <button id="btn2C">C</button>
-        </div>
-    </div>
-</div>
-
-<!-- 第三题 -->
-<div class="mask" id="mask3">
-    <div class="dialog">
-        <h3>【多选】请选择你对这段音乐的感受。</h3>
-        <div class="checkbox-item">
-            <input type="checkbox" id="optA"> A：好听
-        </div>
-        <div class="checkbox-item">
-            <input type="checkbox" id="optB"> B：不好听
-        </div>
-        <div class="checkbox-item">
-            <input type="checkbox" id="optC"> C：觉得作者有品
-        </div>
-        <div class="checkbox-item">
-            <input type="checkbox" id="optD"> D：第一选项没有听过
-        </div>
-        <div class="checkbox-item">
-            <input type="checkbox" id="optE"> E：听过之后非常喜欢
-        </div>
-        <div class="btn-group">
-            <button id="btn3Submit">提交</button>
-        </div>
-    </div>
-</div>
-
-<!-- 第四题 -->
-<div class="mask" id="mask4">
-    <div class="dialog">
-        <h3>喜欢上学，输入一个表示喜欢的英文；不喜欢上学，输入一个表示不喜欢上学的英文。</h3>
-        <div class="countdown-text" id="countdown">剩余时间：60秒</div>
-        <div class="input-wrap">
-            <input type="text" id="answerInput" placeholder="请输入你的答案">
-        </div>
-        <div class="btn-group">
-            <button id="btn4Submit">提交答案</button>
-        </div>
-    </div>
-</div>
-
-<!-- 结局图（成功、失败共用） -->
-<div class="end-img-wrap" id="endWrap">
-    < img id="endImg" src="end.jpg" alt="画面">
-    <button id="backHomeBtn">返回首页</button>
-</div>
-
+<div class="p a" id="s"><div style="text-align:center"><div class="t">神明的挑战</div><div class="st">DIVINE CHALLENGE</div><button id="sb">开 始 挑 战</button></div></div>
+<div class="p" id="v"><video id="A" preload="auto" playsinline webkit-playsinline></video><video id="B" preload="auto" playsinline webkit-playsinline></video></div>
+<div class="m" id="m1"><div class="d"><h3>请问欣赏这个男孩吗？</h3><div class="bg"><button id="y1">欣赏</button><button id="n1">不欣赏</button></div></div></div>
+<div class="m" id="m2"><div class="d"><h3>如果你睡得比较早选a，睡得不早，选b，有心事，睡不着，选c。</h3><div class="bg"><button id="a2">A</button><button id="b2">B</button><button id="c2">C</button></div></div></div>
+<div class="m" id="m3"><div class="d"><h3>【多选】请选择你对这段音乐的感受。</h3><label class="ck"><input type="checkbox" id="oA">A：好听</label><label class="ck"><input type="checkbox" id="oB">B：不好听</label><label class="ck"><input type="checkbox" id="oC">C：觉得作者有品</label><label class="ck"><input type="checkbox" id="oD">D：第一选项没有听过</label><label class="ck"><input type="checkbox" id="oE">E：听过之后非常喜欢</label><div class="bg"><button id="s3">提交</button></div></div></div>
+<div class="m" id="m4"><div class="d"><h3>喜欢上学，输入一个表示喜欢的英文；不喜欢上学，输入一个表示不喜欢上学的英文。</h3><div id="c">剩余时间：60秒</div><input id="ai" placeholder="请输入你的答案" autocomplete="off"><div class="bg"><button id="s4">提交答案</button></div></div></div>
+<div class="p" id="e">< img id="ei" alt="结局"><div id="et"></div><button id="rt">重 新 挑 战</button></div>
 <script>
-    const videoList = [
-        "v1.mp4",
-        "v2.mp4",
-        "v3.mp4",
-        "v4.mp4"
-    ];
-    let currentVideoIndex = 0;
-    let countdownTimer = null;
-
-    const videoEl = document.getElementById('mainVideo');
-    const videoWrap = document.getElementById('videoWrap');
-    const startPage = document.getElementById('startPage');
-    const mask1 = document.getElementById('mask1');
-    const mask2 = document.getElementById('mask2');
-    const mask3 = document.getElementById('mask3');
-    const mask4 = document.getElementById('mask4');
-    const endWrap = document.getElementById('endWrap');
-    const answerInput = document.getElementById('answerInput');
-
-    // 回到首页
-    function resetAll() {
-        clearInterval(countdownTimer);
-        currentVideoIndex = 0;
-        answerInput.value = "";
-        mask1.classList.remove("active");
-        mask2.classList.remove("active");
-        mask3.classList.remove("active");
-        mask4.classList.remove("active");
-        videoEl.pause();
-        videoEl.src = "";
-        videoEl.load();
-        videoWrap.classList.remove("active");
-        endWrap.classList.remove("active");
-        startPage.style.display = "flex";
-    }
-
-    // 失败：直接显示图片
-    function showFailImage() {
-        clearInterval(countdownTimer);
-        mask1.classList.remove("active");
-        mask2.classList.remove("active");
-        mask3.classList.remove("active");
-        mask4.classList.remove("active");
-        videoEl.pause();
-        videoEl.src = "";
-        videoWrap.classList.remove("active");
-        endWrap.classList.add("active");
-    }
-
-    // 通关成功：显示图片
-    function showEndImage() {
-        clearInterval(countdownTimer);
-        mask4.classList.remove("active");
-        videoEl.pause();
-        videoEl.src = "";
-        videoWrap.classList.remove("active");
-        endWrap.classList.add("active");
-    }
-
-    document.getElementById('startBtn').onclick = function () {
-        startPage.style.display = "none";
-        videoWrap.classList.add("active");
-        forceFullscreen();
-        playVideo(currentVideoIndex);
-    };
-
-    document.getElementById('backHomeBtn').onclick = resetAll;
-
-    function forceFullscreen() {
-        if (!document.fullscreenElement) {
-            document.documentElement.requestFullscreen().catch(() => {});
-        }
-    }
-
-    document.addEventListener('keydown', e => {
-        if (e.key === "Escape") e.preventDefault();
-    });
-
-    function playVideo(idx) {
-        if (idx >= videoList.length) return;
-        videoEl.pause();
-        videoEl.currentTime = 0;
-        videoEl.src = videoList[idx];
-        videoEl.load();
-        videoEl.muted = false;
-        videoEl.controls = false;
-        videoEl.play();
-
-        videoEl.onended = () => {
-            if (idx === 0) mask1.classList.add("active");
-            if (idx === 1) mask2.classList.add("active");
-            if (idx === 2) mask3.classList.add("active");
-            if (idx === 3) {
-                startCountdown();
-                mask4.classList.add("active");
-            }
-        };
-    }
-
-    //第一题
-    document.getElementById('btn1Yes').onclick = () => {
-        mask1.classList.remove("active");
-        currentVideoIndex = 1;
-        playVideo(currentVideoIndex);
-    };
-    document.getElementById('btn1No').onclick = showFailImage;
-
-    //第二题
-    document.getElementById('btn2A').onclick = () => {
-        mask2.classList.remove("active");
-        currentVideoIndex = 2;
-        playVideo(currentVideoIndex);
-    };
-    document.getElementById('btn2B').onclick = () => {
-        mask2.classList.remove("active");
-        currentVideoIndex = 2;
-        playVideo(currentVideoIndex);
-    };
-    document.getElementById('btn2C').onclick = showFailImage;
-
-    //第三题
-    document.getElementById('btn3Submit').onclick = () => {
-        const bChecked = document.getElementById('optB').checked;
-        const dChecked = document.getElementById('optD').checked;
-        if (bChecked || dChecked) {
-            showFailImage();
-        } else {
-            mask3.classList.remove("active");
-            currentVideoIndex = 3;
-            playVideo(currentVideoIndex);
-        }
-    };
-
-    //倒计时
-    function startCountdown() {
-        let left = 60;
-        const dom = document.getElementById('countdown');
-        countdownTimer = setInterval(() => {
-            left--;
-            dom.innerText = `剩余时间：${left}秒`;
-            if (left <= 0) {
-                clearInterval(countdownTimer);
-                showFailImage();
-            }
-        }, 1000);
-    }
-
-    //第四题提交
-    document.getElementById('btn4Submit').onclick = () => {
-        clearInterval(countdownTimer);
-        const val = answerInput.value.trim().toLowerCase();
-        if (val === "like" || val === "dislike") {
-            showEndImage();
-        } else {
-            alert("答案错误，挑战失败。");
-            showFailImage();
-        }
-    };
+const $=id=>document.getElementById(id),V=["v1.mp4","v2.mp4","v3.mp4","v4.mp4"],EI={success:"end.jpg",fail:"end.jpg"},N=60;
+const P=[$('A'),$('B')],VW=$('v'),SP=$('s'),M1=$('m1'),M2=$('m2'),M3=$('m3'),M4=$('m4'),EW=$('e'),EI2=$('ei'),ET=$('et'),AI=$('ai'),CD=$('c');
+let k=0,CE=null,CI=-1,TM=null;
+const HM=()=>[M1,M2,M3,M4].forEach(m=>m.classList.remove('a'));
+function PL(i){if(i<0||i>=V.length)return;CI=i;const c=P[k],n=P[1-k],s=V[i];if(c.dataset.s!==s){c.dataset.s=s;c.src=s;c.load()}c.classList.add('a');n.classList.remove('a');CE=c;const ns=V[i+1];if(ns){if(n.dataset.s!==ns){n.dataset.s=ns;n.src=ns;n.load()}}else{n.removeAttribute('src');n.dataset.s='';n.load()}k=1-k;c.play().catch(()=>{c.muted=true;c.play().catch(()=>{})})}
+P.forEach(v=>{v.onended=()=>{if(v!==CE)return;if(CI===0)M1.classList.add('a');else if(CI===1)M2.classList.add('a');else if(CI===2)M3.classList.add('a');else if(CI===3){SC();M4.classList.add('a');setTimeout(()=>AI.focus(),200)}};v.onerror=()=>{if(v!==CE)return;alert('视频加载失败：'+V[CI])}});
+function SC(){clearInterval(TM);let l=N;CD.innerText=`剩余时间：${l}秒`;TM=setInterval(()=>{l--;CD.innerText=`剩余时间：${l}秒`;if(l<=0){clearInterval(TM);RS('fail','时间到')}},1000)}
+function RS(t,x){clearInterval(TM);HM();if(CE)CE.pause();if(CE)CE.classList.remove('a');VW.classList.remove('a');EW.dataset.t=t;EI2.src=EI[t]||EI.fail;ET.innerText=x||(t==='success'?'挑战成功':'挑战失败');EW.classList.add('a')}
+function RE(){clearInterval(TM);HM();P.forEach(v=>{v.pause();v.classList.remove('a')});P[1].removeAttribute('src');P[1].dataset.s='';P[1].load();P[0].dataset.s=V[0];P[0].src=V[0];P[0].load();k=0;CE=null;CI=-1;VW.classList.remove('a');EW.classList.remove('a');EW.removeAttribute('data-t');EI2.removeAttribute('src');ET.innerText='';AI.value='';CD.innerText=`剩余时间：${N}秒`;document.querySelectorAll('.m input[type=checkbox]').forEach(c=>c.checked=false);SP.classList.add('a')}
+$('sb').onclick=()=>{SP.classList.remove('a');VW.classList.add('a');if(!document.fullscreenElement)document.documentElement.requestFullscreen().catch(()=>{});PL(0)};
+$('rt').onclick=RE;EI2.onclick=RE;
+$('y1').onclick=()=>{M1.classList.remove('a');PL(1)};$('n1').onclick=()=>RS('fail','挑战失败');
+$('a2').onclick=()=>{M2.classList.remove('a');PL(2)};$('b2').onclick=()=>{M2.classList.remove('a');PL(2)};$('c2').onclick=()=>RS('fail','挑战失败');
+$('s3').onclick=()=>{const b=['oA','oB','oC','oD','oE'].map(i=>$(i));if(!b.some(x=>x.checked)){alert('请至少选择一项。');return}if($('oB').checked||$('oD').checked)RS('fail','挑战失败');else{M3.classList.remove('a');PL(3)}};
+$('s4').onclick=()=>{const v=AI.value.trim().toLowerCase();if(v==='like'||v==='dislike')RS('success','挑战成功');else RS('fail','答案错误')};
+AI.addEventListener('keydown',e=>{if(e.key==='Enter')$('s4').click()});
+P[0].dataset.s=V[0];P[0].src=V[0];P[0].load();
 </script>
 </body>
 </html>
